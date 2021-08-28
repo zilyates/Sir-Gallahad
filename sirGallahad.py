@@ -565,4 +565,4 @@ async def on_message(message):
             else:
                 print("ERROR 100: User not found")
 
-client.run('ODAyNjY4ODUxNDM0NDg3ODMw.YAylnw.O9RSVophhBwbwspYaJaOU8YShws')
+client.run('ODAyNjY4ODUxNDM0NDg3ODMw.YAylnw.6liyEc11GCMnCYFulkjsLRYACDc')
