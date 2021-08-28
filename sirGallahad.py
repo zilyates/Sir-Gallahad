@@ -219,11 +219,6 @@ welcomeMessageFinal = welcomeMessage[0] + welcomeMessage[1] + welcomeMessage[2] 
 
 warning = "You have 45 min to submit the appropriate form before you are kicked from the server"
 
-guilder = client.get_guild(695831785900081212)
-
-def testServerRoleObjCreation():
-
-
 @client.event
 async def on_member_join(member):
     joiner = await member.create_dm()
