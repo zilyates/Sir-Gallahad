@@ -566,13 +566,14 @@ async def on_message(message):
 
 reasonForSus = "Hello {member}, {commander} has decided to suspend you due to you breaking the rules of the server. Plz review and refresh your knowledge by visiting the rules channel"
 
-@client.command(aliases=['Suspend', 'suspend', 'sus', 'mrsus', 'Mrsus', 'MrSus', 'block', 'Block', 'Smite', 'smite', 'Smote', 'smote', 'Smitten', 'smitten', 'Smoten', 'smoten'])
+@client.command(aliases=['Suspend', 'sus', 'mrsus', 'Mrsus', 'MrSus', 'block', 'Block', 'Smite', 'smite', 'Smote', 'smote', 'Smitten', 'smitten', 'Smoten', 'smoten'])
 async def suspend(ctx, named, times, reason):
     member = ctx.message.guild.get_member_named(named)
     if member != None:
         commander = ctx.author.name
 
         suspended = 847344946386305076
+        suspended = ctx.message.guild.get_role(suspended)
         await member.add_roles(suspended)
 
         general = ctx.guild.get_channel(723897247942836234)
@@ -597,12 +598,20 @@ async def suspend(ctx, named, times, reason):
             await funnyQuotes.set_permissions(member, view_channel=False)
             await liveStreams.set_permissions(member, view_channel=False)
             await montages.set_permissions(member, view_channel=False)
-            await shotClips.set_permissions(member, view_channel=False)
+            await shortClips.set_permissions(member, view_channel=False)
             await funnyReplays.set_permissions(member, view_channel=False)
             await youtubeStuff.set_permissions(member, view_channel=False)
             await wordOfWisdom.set_permissions(member, view_channel=False)
 
+            chan = await member.create_dm()
+            if reason != "":
+                await chan.send(reason)
+            elif reason == "":
+                await chan.send(reasonForSus)
+
+            await ctx.send("Command complete")
             # Seconds in 24 hours
+            times = int(times)
             base = 86400
             multi = base * times
             await asyncio.sleep(multi)
@@ -621,12 +630,6 @@ async def suspend(ctx, named, times, reason):
             await wordOfWisdom.set_permissions(member, overwrite=None)
 
             await member.remove_roles(suspended)
-
-            chan = await member.create_dm()
-            if reason != "":
-                await chan.send(reason)
-            elif reason == "":
-                await chan.send(reasonForSus)
         else:
             await ctx.send("ERROR 101: One or more of the channels has been deleted. Command aborted")
     else:
