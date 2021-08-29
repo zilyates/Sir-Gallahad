@@ -1,11 +1,12 @@
 import discord
 import asyncio
 from datetime import datetime
+from discord.ext import commands
 
 intents = discord.Intents.default()
 intents.members = True
 
-client = discord.Client(intents=intents)
+client = commands.Bot(command_prefix='$', intents=intents)
 
 ########
 # Knights
@@ -43,6 +44,83 @@ knightServerRolesID = [
     ]
     
 knightsChanID = 799399499864211537
+
+#######
+# test server
+#######
+testServerRolesID = [
+        801223240819277824, # new comer 0
+        798660624905142273, # main tank 1
+        798660832305086475, # flex tank 2
+        797893508077715509, # projectile dps 3
+        797233209536151552, # hitscan dps 4
+        801956112248995869, # main support 5
+        801956128685817927, # flex support 6
+        798971361279344681, # head coach 7
+        798971374088618054, # assistant coach 8
+        798971622844399616, # analyst 9
+        801956135426588682, # assistant manager0
+        801956138568384582, # lobby manager 1
+        801956142346403860, # vod recorder 2
+        801956144246816788, # legal assistant 3
+        801956145627398154, # content creator and editor 4
+        800175616967311381, # programmer 5
+        801956148033880065, # developer 6
+        801956149715795986, # graphic designer and developer 7
+        801956152001953822, # video editing and content creator 8
+        801956153416089610, # streamer 9
+        801956155017658368, # journalist 0
+        801956156489859104, # social media manager 1
+        801956158410588191, # school tutoring 2
+        801956160026443776, # twitch channel production lead 3
+        793360510271488050, # NA 4
+        796965297189945395, # EU 5
+        798662135693574155, # players to interview 6
+        798662169528238152, # staff to interview 7
+        801956164131749898  # coaches to interview 8
+    ]
+    
+testServerChanID = 793351956210384910
+
+###########
+# Merlin Server
+###########
+merlinServerRolesID = [
+    852331423552634880, # newcomers 0
+	828084249042092063, # staff to interview 1
+	851301334304686090, # LFT 2
+	851301497954500608, # LFP 3
+	851302490439811092, # NA 4
+	851313938812370954, # EU 5
+	828086417460166666, # players 6
+	828086520039604284, # managers 7
+	828087041987969055, # coaches 8
+	828087374834565120, # assistant coach 9
+	851314517887418419, # social media manager 0
+	851314980456366081, # editor 1
+	851316591567175680, # main tank 2
+	851316707782950943, # off tank 3
+	851316791938121760, # flex tank 4
+	851316859848622080, # flex dps 5
+	851317006032306177, # hitscan dps 6
+	851317113175146588, # main support 7
+	851317491757350916, # flex support 8
+	851317193647325224, # OTP 9
+    851315077172691015, # Programmer 0
+    828088024913936384, # Casters 1
+    828088074792599582, # Streamers 2
+    828087819616124939, # Vod recorders 3
+    851317798574620702, # Camera Men 4
+    851317958893764639, # Montages 5
+    828088165310398514, # GFX 6
+    851318159063777301, # Musician 7
+    851301645991673887, # LF-Staff 8
+    851313759360253962, # LFC 9
+    828086820805017650, # Org owners 0
+    852712868180393985, # Assistant managers 1
+    851315182894317588  # Developer 2
+   ]
+merlinServerChanID = 851312448408649739
 
 knightsStaffPositionsStr = [ 
     "Assistant Manager",
@@ -126,83 +204,6 @@ merlinContentCreators = [
     "GFX",
     "Musician"
     ]
-
-#######
-# test server
-#######
-testServerRolesID = [
-        801223240819277824, # new comer 0
-        798660624905142273, # main tank 1
-        798660832305086475, # flex tank 2
-        797893508077715509, # projectile dps 3
-        797233209536151552, # hitscan dps 4
-        801956112248995869, # main support 5
-        801956128685817927, # flex support 6
-        798971361279344681, # head coach 7
-        798971374088618054, # assistant coach 8
-        798971622844399616, # analyst 9
-        801956135426588682, # assistant manager0
-        801956138568384582, # lobby manager 1
-        801956142346403860, # vod recorder 2
-        801956144246816788, # legal assistant 3
-        801956145627398154, # content creator and editor 4
-        800175616967311381, # programmer 5
-        801956148033880065, # developer 6
-        801956149715795986, # graphic designer and developer 7
-        801956152001953822, # video editing and content creator 8
-        801956153416089610, # streamer 9
-        801956155017658368, # journalist 0
-        801956156489859104, # social media manager 1
-        801956158410588191, # school tutoring 2
-        801956160026443776, # twitch channel production lead 3
-        793360510271488050, # NA 4
-        796965297189945395, # EU 5
-        798662135693574155, # players to interview 6
-        798662169528238152, # staff to interview 7
-        801956164131749898  # coaches to interview 8
-    ]
-    
-testServerChanID = 793351956210384910
-
-###########
-# Merlin Server
-###########
-merlinServerRolesID = [
-    852331423552634880, # newcomers 0
-	828084249042092063, # staff to interview 1
-	851301334304686090, # LFT 2
-	851301497954500608, # LFP 3
-	851302490439811092, # NA 4
-	851313938812370954, # EU 5
-	828086417460166666, # players 6
-	828086520039604284, # managers 7
-	828087041987969055, # coaches 8
-	828087374834565120, # assistant coach 9
-	851314517887418419, # social media manager 0
-	851314980456366081, # editor 1
-	851316591567175680, # main tank 2
-	851316707782950943, # off tank 3
-	851316791938121760, # flex tank 4
-	851316859848622080, # flex dps 5
-	851317006032306177, # hitscan dps 6
-	851317113175146588, # main support 7
-	851317491757350916, # flex support 8
-	851317193647325224, # OTP 9
-    851315077172691015, # Programmer 0
-    828088024913936384, # Casters 1
-    828088074792599582, # Streamers 2
-    828087819616124939, # Vod recorders 3
-    851317798574620702, # Camera Men 4
-    851317958893764639, # Montages 5
-    828088165310398514, # GFX 6
-    851318159063777301, # Musician 7
-    851301645991673887, # LF-Staff 8
-    851313759360253962, # LFC 9
-    828086820805017650, # Org owners 0
-    852712868180393985, # Assistant managers 1
-    851315182894317588  # Developer 2
-   ]
-merlinServerChanID = 851312448408649739
 
 @client.event
 async def on_ready():
@@ -406,7 +407,7 @@ async def on_message(message):
     staffRolesSTR = []
     coachingRolesSTR = []
     playerRolesSTR = []
-    myself = message.guild.get_member(464936463830876160)
+    #myself = message.guild.get_member(464936463830876160)
         
     if len(message.embeds) > 0 and message.channel.id != merlinServerChanID:
         numFields = len(message.embeds[0].fields)
@@ -570,5 +571,74 @@ async def on_message(message):
 
             else:
                 print("ERROR 100: User not found")
+    await client.process_commands(message)
+
+reasonForSus = "Hello {member}, {commander} has decided to suspend you due to you breaking the rules of the server. Plz review and refresh your knowledge by visiting the rules channel"
+
+@client.command(aliases=['Suspend', 'suspend', 'sus', 'mrsus', 'Mrsus', 'MrSus', 'block', 'Block', 'Smite', 'smite', 'Smote', 'smote', 'Smitten', 'smitten', 'Smoten', 'smoten'])
+async def suspend(ctx, named, times, reason):
+    member = ctx.message.guild.get_member_named(named)
+    if member != None:
+        commander = ctx.author.name
+
+        suspended = 847344946386305076
+        await member.add_roles(suspended)
+
+        general = ctx.guild.get_channel(723897247942836234)
+        matchMaking = ctx.guild.get_channel(793891809360216134)
+        birthdays = ctx.guild.get_channel(777200743245152307)
+        musicCorner = ctx.guild.get_channel(724851327443796050)
+        inspiringQuotes = ctx.guild.get_channel(734520498528190474)
+        funnyQuotes = ctx.guild.get_channel(794113192418607114)
+        liveStreams = ctx.guild.get_channel(780469195795464244)
+        montages = ctx.guild.get_channel(797156492112297985)
+        shortClips = ctx.guild.get_channel(826871035260960788)
+        funnyReplays = ctx.guild.get_channel(833865773839679518)
+        youtubeStuff = ctx.guild.get_channel(865414556217769984)
+        wordOfWisdom = ctx.guild.get_channel(790756741158928414)
+        
+        if general != None and matchMaking != None and birthdays != None and musicCorner != None and inspiringQuotes != None and funnyQuotes != None and liveStreams != None and montages != None and shortClips != None and funnyReplays != None and youtubeStuff != None and wordOfWisdom != None:
+            await general.set_permissions(member, view_channel=False)
+            await matchMaking.set_permissions(member, view_channel=False)
+            await birthdays.set_permissions(member, view_channel=False)
+            await musicCorner.set_permissions(member, view_channel=False)
+            await inspiringQuotes.set_permissions(member, view_channel=False)
+            await funnyQuotes.set_permissions(member, view_channel=False)
+            await liveStreams.set_permissions(member, view_channel=False)
+            await montages.set_permissions(member, view_channel=False)
+            await shotClips.set_permissions(member, view_channel=False)
+            await funnyReplays.set_permissions(member, view_channel=False)
+            await youtubeStuff.set_permissions(member, view_channel=False)
+            await wordOfWisdom.set_permissions(member, view_channel=False)
+
+            # Seconds in 24 hours
+            base = 86400
+            multi = base * times
+            await asyncio.sleep(multi)
+
+            await general.set_permissions(member, overwrite=None)
+            await matchMaking.set_permissions(member, overwrite=None)
+            await birthdays.set_permissions(member, overwrite=None)
+            await musicCorner.set_permissions(member, overwrite=None)
+            await inspiringQuotes.set_permissions(member, overwrite=None)
+            await funnyQuotes.set_permissions(member, overwrite=None)
+            await liveStreams.set_permissions(member, overwrite=None)
+            await montages.set_permissions(member, overwrite=None)
+            await shotClips.set_permissions(member, overwrite=None)
+            await funnyReplays.set_permissions(member, overwrite=None)
+            await youtubeStuff.set_permissions(member, overwrite=None)
+            await wordOfWisdom.set_permissions(member, overwrite=None)
+
+            await member.remove_roles(suspended)
+
+            chan = await member.create_dm()
+            if reason != "":
+                await chan.send(reason)
+            elif reason == "":
+                await chan.send(reasonForSus)
+        else:
+            await ctx.send("ERROR 101: One or more of the channels has been deleted. Command aborted")
+    else:
+        await ctx.send("ERROR 100 User not found. Common reasons include: spelling, capitilization, numbers. Command aborted")
 
 client.run('ODAyNjY4ODUxNDM0NDg3ODMw.YAylnw.6liyEc11GCMnCYFulkjsLRYACDc')
