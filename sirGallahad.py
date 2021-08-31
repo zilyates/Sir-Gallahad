@@ -2,9 +2,11 @@ import discord
 import asyncio
 from datetime import datetime
 from discord.ext import commands
+import unicodedata
 
 intents = discord.Intents.default()
 intents.members = True
+intents.reactions = True
 
 client = commands.Bot(command_prefix='$', intents=intents)
 
@@ -562,7 +564,94 @@ async def on_message(message):
 
             else:
                 print("ERROR 100: User not found")
+
     await client.process_commands(message)
+
+
+
+def createPhysics5A():
+    physics5A = client.get_guild(881917444325793824)
+    psych149 = client.get_guild(881971226002751548)
+
+    host = physics5A.get_member_named("Zilya#4818")
+    tutor = physics5A.get_role(881919160257490976)
+    group1 = psych149.get_role(882019411576385547)
+    group2 = psych149.get_role(882019479553449984)
+    group3 = psych149.get_role(882019520963825784)
+    group4 = psych149.get_role(882019547551514624)
+    group5 = psych149.get_role(882019571807186964)
+    group6 = psych149.get_role(882019594959728640)
+    group7 = psych149.get_role(882019619102150666)
+    group8 = psych149.get_role(882019642862882827)
+    group9 = psych149.get_role(882019661284257843)
+
+    return host, tutor, group1, group2, group3, group4, group5, group6, group7, group8, group9, psych149
+
+@client.event
+async def on_raw_reaction_add(payload):
+    reactionRolesID = 881960753710645259
+    bots_ots = 882016451807023104
+    roles_channel = 881980026214559775
+
+    host, tutor, group1, group2, group3, group4, group5, group6, group7, group8, group9, psych = createPhysics5A()
+    gallahad = psych.get_member(802668851434487830)
+
+    if payload.channel_id == reactionRolesID or payload.channel_id == bots_ots or payload.channel_id == roles_channel and payload.member != gallahad:
+        if payload.emoji.name == "thinky_snake":
+            await payload.member.add_roles(tutor)
+        elif unicodedata.name(payload.emoji.name) == "WATERMELON":
+            await payload.member.add_roles(group1)
+        elif unicodedata.name(payload.emoji.name) == "BAGEL":
+            await payload.member.add_roles(group2)
+        elif unicodedata.name(payload.emoji.name) == "BACON":
+            await payload.member.add_roles(group3)
+        elif unicodedata.name(payload.emoji.name) == "PANCAKES":
+            await payload.member.add_roles(group4)
+        elif unicodedata.name(payload.emoji.name) == "FORTUNE COOKIE":
+            await payload.member.add_roles(group5)
+        elif unicodedata.name(payload.emoji.name) == "STEAMING BOWL":
+            await payload.member.add_roles(group6)
+        elif unicodedata.name(payload.emoji.name) == "SOFT ICE CREAM":
+            await payload.member.add_roles(group7)
+        elif unicodedata.name(payload.emoji.name) == "FRENCH FRIES":
+            await payload.member.add_roles(group8)
+        elif unicodedata.name(payload.emoji.name) == "SHORTCAKE":
+            await payload.member.add_roles(group9)
+
+@client.event
+async def on_raw_reaction_remove(payload):
+    reactionRolesID = 881960753710645259
+    bots_ots = 882016451807023104
+    roles_channel = 881980026214559775
+    host, tutor, group1, group2, group3, group4, group5, group6, group7, group8, group9, psych = createPhysics5A()
+
+    if payload.channel_id == reactionRolesID:
+        physics5A = client.get_guild(881917444325793824)
+        member = physics5A.get_member(payload.user_id)
+    elif payload.channel_id == bots_ots or payload.channel_id == roles_channel:
+        member = psych.get_member(payload.user_id)
+
+    if payload.channel_id == reactionRolesID or payload.channel_id == bots_ots or payload.channel_id == roles_channel:
+        if payload.emoji.name == "thinky_snake":
+            await member.remove_roles(tutor)
+        elif unicodedata.name(payload.emoji.name) == "WATERMELON":
+            await member.remove_roles(group1)
+        elif unicodedata.name(payload.emoji.name) == "BAGEL":
+            await member.remove_roles(group2)
+        elif unicodedata.name(payload.emoji.name) == "BACON":
+            await member.remove_roles(group3)
+        elif unicodedata.name(payload.emoji.name) == "PANCAKES":
+            await member.remove_roles(group4)
+        elif unicodedata.name(payload.emoji.name) == "FORTUNE COOKIE":
+            await member.remove_roles(group5)
+        elif unicodedata.name(payload.emoji.name) == "STEAMING BOWL":
+            await member.remove_roles(group6)
+        elif unicodedata.name(payload.emoji.name) == "SOFT ICE CREAM":
+            await member.remove_roles(group7)
+        elif unicodedata.name(payload.emoji.name) == "FRENCH FRIES":
+            await member.remove_roles(group8)
+        elif unicodedata.name(payload.emoji.name) == "SHORTCAKE":
+            await member.remove_roles(group9)
 
 reasonForSus = "Hello {member}, {commander} has decided to suspend you due to you breaking the rules of the server. Plz review and refresh your knowledge by visiting the rules channel"
 
@@ -616,23 +705,182 @@ async def suspend(ctx, named, times, reason):
             multi = base * times
             await asyncio.sleep(multi)
 
-            await general.set_permissions(member, overwrite=None)
-            await matchMaking.set_permissions(member, overwrite=None)
-            await birthdays.set_permissions(member, overwrite=None)
-            await musicCorner.set_permissions(member, overwrite=None)
-            await inspiringQuotes.set_permissions(member, overwrite=None)
-            await funnyQuotes.set_permissions(member, overwrite=None)
-            await liveStreams.set_permissions(member, overwrite=None)
-            await montages.set_permissions(member, overwrite=None)
-            await shotClips.set_permissions(member, overwrite=None)
-            await funnyReplays.set_permissions(member, overwrite=None)
-            await youtubeStuff.set_permissions(member, overwrite=None)
-            await wordOfWisdom.set_permissions(member, overwrite=None)
+            if member != None:
+                await general.set_permissions(member, overwrite=None)
+                await matchMaking.set_permissions(member, overwrite=None)
+                await birthdays.set_permissions(member, overwrite=None)
+                await musicCorner.set_permissions(member, overwrite=None)
+                await inspiringQuotes.set_permissions(member, overwrite=None)
+                await funnyQuotes.set_permissions(member, overwrite=None)
+                await liveStreams.set_permissions(member, overwrite=None)
+                await montages.set_permissions(member, overwrite=None)
+                await shortClips.set_permissions(member, overwrite=None)
+                await funnyReplays.set_permissions(member, overwrite=None)
+                await youtubeStuff.set_permissions(member, overwrite=None)
+                await wordOfWisdom.set_permissions(member, overwrite=None)
 
-            await member.remove_roles(suspended)
+                await member.remove_roles(suspended)
         else:
             await ctx.send("ERROR 101: One or more of the channels has been deleted. Command aborted")
     else:
         await ctx.send("ERROR 100 User not found. Common reasons include: spelling, capitilization, numbers. Command aborted")
+
+## CREATE EMBED
+@client.command(pass_context=True, aliases=['reaction', 'reaction_roles', 'create_embed'])
+async def create(ctx, header, descriptor, field1Name, field1value, footer):
+    embed=discord.Embed(title=header,
+                        description=descriptor,
+                        color=0x109319)
+    embed.set_author(name=ctx.author.display_name, icon_url=ctx.author.avatar_url)
+    embed.add_field(name=field1Name, value=field1value)
+
+    embed.set_footer(text=footer)
+
+    msg = await ctx.send(embed=embed)
+    await ctx.message.delete()
+
+    reactionRolesID = 881960753710645259
+    bots_ots = 882016451807023104
+    roles_channel = 881980026214559775
+
+    if ctx.message.channel.id == bots_ots or ctx.message.channel.id == roles_channel:
+        reacts = ["\U0001F349", "\U0001F96F", "\U0001F953", "\U0001F95E", "\U0001F960", "\U0001F35C", "\U0001F366", "\U0001F35F", "\U0001F370"]
+        for emoji in reacts:
+            await msg.add_reaction(emoji)
+    elif ctx.message.channel.id == reactionRolesID:
+        pass
+
+@client.command()
+async def embeding(ctx, *args):
+    print("In")
+    title1 = "Welcome to Sir Gallahad Embedded Messaging"
+    desc = "The way this'll work is I'll ask you for each aspect of the embedded message including: title, description, field name, field value, add field, footer."
+    embed=discord.Embed(title=title1,
+                        description=desc,
+                        color=0x109319)
+    embed.set_author(name=ctx.author.display_name, icon_url=ctx.author.avatar_url)
+
+    msg1 = await ctx.send(embed=embed)
+
+    def check(msg):
+        return msg.author == ctx.message.author and msg.channel == ctx.message.channel
+
+    msg = await client.wait_for("message", check=check)
+    message_id = msg.id
+    message_delete = await ctx.message.channel.fetch_message(message_id)
+
+    await message_delete.delete()
+    await msg1.delete()
+    title1 = msg.content
+
+    embed1=discord.Embed(title="What would you like your description to be?",
+                         description="testing",
+                         color=0x109319)
+    embed1.set_author(name=ctx.author.display_name, icon_url=ctx.author.avatar_url)
+    msg1 = await ctx.send(embed=embed1)
+
+    msg = await client.wait_for("message", check=check)
+    message_id = msg.id
+    message_delete = await ctx.message.channel.fetch_message(message_id)
+    await message_delete.delete()
+    await msg1.delete()
+    description1 = msg.content
+    
+    counter = 0
+    field_text = [""] * 20
+
+    embed2=discord.Embed(title="Do you want a Field?",
+                         description="If you don't then please respond with 'No'. If you do then please respond with 'Yes'.",
+                         color=0x109319)
+    embed2.set_author(name=ctx.author.display_name, icon_url=ctx.author.avatar_url)
+    msg1 = await ctx.send(embed=embed2)
+
+    enter_loop = await client.wait_for("message", check=check)
+    message_id = enter_loop.id
+    message_delete = await ctx.message.channel.fetch_message(message_id)
+
+    await message_delete.delete()
+    await msg1.delete()
+    enter_loop = enter_loop.content
+
+    counter = 0
+    field_num = 0
+    while counter < 20 and field_text[counter] != "No" and field_text[counter] != "Exit" and enter_loop != "No":
+        embed3=discord.Embed(title="What would you like for your field title?",
+                            color=0x109319)
+        embed3.set_author(name=ctx.author.display_name, icon_url=ctx.author.avatar_url)
+        msg1 = await ctx.send(embed=embed3)
+
+        msg_content = await client.wait_for("message", check=check)
+        print(f'{field_text[counter]}')
+        message_id = msg_content.id
+        message_delete = await ctx.message.channel.fetch_message(message_id)
+        await message_delete.delete()
+        await msg1.delete()
+        field_text[counter] = msg_content.content
+
+        embed4=discord.Embed(title="What value would you like for the previous field?",
+                            color=0x109319)
+        embed4.set_author(name=ctx.author.display_name, icon_url=ctx.author.avatar_url)
+        msg1 = await ctx.send(embed=embed4)
+
+        counter = counter + 1
+
+        msg_content = await client.wait_for("message", check=check)
+        message_id = msg_content.id
+        message_delete = await ctx.message.channel.fetch_message(message_id)
+        await message_delete.delete()
+        await msg1.delete()
+        field_text[counter] = msg_content.content
+
+        embed5=discord.Embed(title="Do you want another Field?",
+                            description="If you don't then please respond with 'No'. If you do then please respond with 'Yes'.",
+                            color=0x109319)
+        embed5.set_author(name=ctx.author.display_name, icon_url=ctx.author.avatar_url)
+        msg1 = await ctx.send(embed=embed5)
+
+        enter_loop = await client.wait_for("message", check=check)
+        message_id = enter_loop.id
+        message_delete = await ctx.message.channel.fetch_message(message_id)
+
+        await message_delete.delete()
+        await msg1.delete()
+        enter_loop = enter_loop.content
+
+        field_num = field_num + 1
+        counter = counter + 1
+
+    # Create the embed 
+    embed6=discord.Embed(title=title1,
+                         description=description1,
+                         color=0x109319)
+    embed6.set_author(name=ctx.author.display_name, icon_url=ctx.author.avatar_url)
+
+    index = 0
+    index1 = 0
+    while index1 < 10:
+        if field_text[index] != "":
+            field_name = field_text[index]
+            index = index + 1
+            field_value = field_text[index]
+
+            print(f'{field_name}')
+
+            embed6.add_field(name=field_name,
+                            value=field_value,
+                            inline=True)
+
+            index = index + 1 
+            index1 = index1 + 1
+        else:
+            break
+
+    await ctx.send(embed=embed6)
+
+    print(f'{ctx.message.content}')
+
+@client.command()
+async def test(ctx):
+    await ctx.send("Testing")
 
 client.run('ODAyNjY4ODUxNDM0NDg3ODMw.YAylnw.6liyEc11GCMnCYFulkjsLRYACDc')
