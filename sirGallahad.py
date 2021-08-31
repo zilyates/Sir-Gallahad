@@ -891,7 +891,7 @@ async def embeding(ctx, chan_name, num_emojis):
 @client.command(pass_context=True, aliases=['Purge', 'purge', 'Remove', 'remove', 'Elim', 'elim'])
 async def Emancipate(ctx, multiple, amount):
     if multiple != "Skip" and multiple != "skip" and multiple != "s":
-        num = amount * multiple
+        num = int(amount) * int(multiple)
     else:
         num = amount
     embed=discord.Embed(title=f'Are you sure you would like to delete {num} messages?',
@@ -935,7 +935,7 @@ async def Emancipate(ctx, multiple, amount):
 
 
 @client.command()
-async def test(ctx):
-    await ctx.send("Testing")
+async def ping(ctx):
+    await ctx.send("pong")
 
 client.run('ODAyNjY4ODUxNDM0NDg3ODMw.YAylnw.6liyEc11GCMnCYFulkjsLRYACDc')
