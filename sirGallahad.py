@@ -572,6 +572,7 @@ async def on_message(message):
 def createPhysics5A():
     physics5A = client.get_guild(881917444325793824)
     psych149 = client.get_guild(881971226002751548)
+    testing_server = client.get_guild(793351956210384907)
 
     host = physics5A.get_member_named("Zilya#4818")
     tutor = physics5A.get_role(881919160257490976)
@@ -584,8 +585,9 @@ def createPhysics5A():
     group7 = psych149.get_role(882019619102150666)
     group8 = psych149.get_role(882019642862882827)
     group9 = psych149.get_role(882019661284257843)
+    na = testing_server.get_role(793360510271488050)
 
-    return host, tutor, group1, group2, group3, group4, group5, group6, group7, group8, group9, psych149
+    return host, tutor, group1, group2, group3, group4, group5, group6, group7, group8, group9, psych149, physics5A, testing_server, na
 
 @client.event
 async def on_raw_reaction_add(payload):
@@ -593,10 +595,10 @@ async def on_raw_reaction_add(payload):
     bots_ots = 882016451807023104
     roles_channel = 881980026214559775
 
-    host, tutor, group1, group2, group3, group4, group5, group6, group7, group8, group9, psych = createPhysics5A()
+    host, tutor, group1, group2, group3, group4, group5, group6, group7, group8, group9, psych, physics5A, testing_server, na = createPhysics5A()
     gallahad = psych.get_member(802668851434487830)
 
-    if payload.channel_id == reactionRolesID or payload.channel_id == bots_ots or payload.channel_id == roles_channel and payload.member != gallahad:
+    if payload.guild_id == 881971226002751548 and payload.user_id != 802668851434487830:
         if payload.emoji.name == "thinky_snake":
             await payload.member.add_roles(tutor)
         elif unicodedata.name(payload.emoji.name) == "WATERMELON":
@@ -617,21 +619,25 @@ async def on_raw_reaction_add(payload):
             await payload.member.add_roles(group8)
         elif unicodedata.name(payload.emoji.name) == "SHORTCAKE":
             await payload.member.add_roles(group9)
+    elif payload.guild_id == 793351956210384907 and payload.user_id != 802668851434487830:
+        if unicodedata.name(payload.emoji.name) == "WATERMELON":
+            await payload.member.add_roles(na)
 
 @client.event
 async def on_raw_reaction_remove(payload):
     reactionRolesID = 881960753710645259
     bots_ots = 882016451807023104
     roles_channel = 881980026214559775
-    host, tutor, group1, group2, group3, group4, group5, group6, group7, group8, group9, psych = createPhysics5A()
+    host, tutor, group1, group2, group3, group4, group5, group6, group7, group8, group9, psych, physics5A, testing_server, na = createPhysics5A()
 
-    if payload.channel_id == reactionRolesID:
-        physics5A = client.get_guild(881917444325793824)
+    if payload.guild_id == 881917444325793824:
         member = physics5A.get_member(payload.user_id)
-    elif payload.channel_id == bots_ots or payload.channel_id == roles_channel:
+    elif payload.guild_id == 881971226002751548:
         member = psych.get_member(payload.user_id)
+    elif payload.guild_id == 793351956210384907:
+        member = testing_server.get_member(payload.user_id)
 
-    if payload.channel_id == reactionRolesID or payload.channel_id == bots_ots or payload.channel_id == roles_channel:
+    if payload.guild_id == 881971226002751548 and payload.user_id != 802668851434487830:
         if payload.emoji.name == "thinky_snake":
             await member.remove_roles(tutor)
         elif unicodedata.name(payload.emoji.name) == "WATERMELON":
@@ -652,6 +658,9 @@ async def on_raw_reaction_remove(payload):
             await member.remove_roles(group8)
         elif unicodedata.name(payload.emoji.name) == "SHORTCAKE":
             await member.remove_roles(group9)
+    if payload.guild_id == 793351956210384907 and payload.user_id != 802668851434487830:
+        if unicodedata.name(payload.emoji.name) == "WATERMELON":
+            await member.remove_roles(na)
 
 reasonForSus = "Hello {member}, {commander} has decided to suspend you due to you breaking the rules of the server. Plz review and refresh your knowledge by visiting the rules channel"
 
@@ -760,6 +769,7 @@ async def embeding(ctx, chan_name, num_emojis):
                         description=desc,
                         color=0x109319)
     embed.set_author(name=ctx.author.display_name, icon_url=ctx.author.avatar_url)
+    embed.set_footer(text="This process only allows for 9 fields maximum to be created. If you would like more please contact the creator Zilya#4818")
 
     msg1 = await ctx.send(embed=embed)
     await ctx.message.delete()
@@ -785,7 +795,7 @@ async def embeding(ctx, chan_name, num_emojis):
     message_delete = await ctx.message.channel.fetch_message(message_id)
     await message_delete.delete()
     await msg1.delete()
-    description1 = msg.content
+    description1 = msg.content + "\n\u200b"
     
     counter = 0
     field_text = [""] * 20
@@ -817,6 +827,8 @@ async def embeding(ctx, chan_name, num_emojis):
         embed5=discord.Embed(title="Please enter the description you would like for the field you added a moment ago.",
                             color=0x109319)
         embed5.set_author(name=ctx.author.display_name, icon_url=ctx.author.avatar_url)
+        embed5.set_footer(text="If you don't want a description for the previous field title you may enter 'Skip' to leave this empty.")
+
         msg1 = await ctx.send(embed=embed5)
 
         emoji_number = emoji_number - 1
@@ -828,6 +840,10 @@ async def embeding(ctx, chan_name, num_emojis):
         await message_delete.delete()
         await msg1.delete()
         field_text[counter] = msg_content.content
+
+        if field_text[counter].lower() == "skip":
+            field_text[counter] = ""
+
         counter = counter + 1
 
     await msg2.delete()
@@ -844,10 +860,14 @@ async def embeding(ctx, chan_name, num_emojis):
             field_name = field_text[index]
             index = index + 1
             field_value = field_text[index]
-
-            embed7.add_field(name=field_name,
-                            value=field_value,
-                            inline=False)
+            if field_value != "":
+                embed7.add_field(name=field_name,
+                                value=field_value,
+                                inline=False)
+            else:
+                embed7.add_field(name=field_name,
+                                 value="\u200b",
+                                 inline=False)
 
             index = index + 1 
             index1 = index1 + 1
@@ -863,7 +883,6 @@ async def embeding(ctx, chan_name, num_emojis):
         reacts = ["\U0001F349", "\U0001F96F", "\U0001F953", "\U0001F95E", "\U0001F960", "\U0001F35C", "\U0001F366", "\U0001F35F", "\U0001F370"]
         index = 0
         while emoji_number != 0:
-            print(f'{emoji_number}')
             await fin.add_reaction(reacts[index])
             emoji_number = emoji_number - 1
             index = index + 1
