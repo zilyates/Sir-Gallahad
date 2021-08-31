@@ -412,23 +412,23 @@ async def on_message(message):
         if discordUsername != "":
             user = message.guild.get_member_named(discordUsername)
             if user != None:
-                await user.remove_roles(knightServerRolesObj[0][0])
+                await user.remove_roles(knightServerRolesObj[0])
                 for field in embedFields:
                     if field.name == "Which region are you applying for?":
                         regionApp = field.value
                         if regionApp == "NA":
-                            await user.add_roles(knightServerRolesObj[24][0])
+                            await user.add_roles(knightServerRolesObj[24])
                             NA = True
                         elif regionApp == "EU":
-                            await user.add_roles(knightServerRolesObj[25][0])
+                            await user.add_roles(knightServerRolesObj[25])
                             EU = True
                     elif field.name == "Which role?" or field.name == "Which role are you applying for?" or field.name == "Which role are you applying for? (cont.)":
                         if field.value:
                             index = 1
-                            await user.add_roles(knightServerRolesObj[26][0])
+                            await user.add_roles(knightServerRolesObj[26])
                             for poz in knightsTeamPositionsStr:
                                 if field.value == poz:
-                                    await user.add_roles(knightServerRolesObj[index][0])
+                                    await user.add_roles(knightServerRolesObj[index])
                                     playerRolesSTR.append(poz)
                                 index += 1
                     elif field.name == "Which coaching position are you applying for?":
@@ -437,17 +437,17 @@ async def on_message(message):
                             await user.add_roles(knightServerRolesObj[28]) # coach to apply role
                             for pos in knightsCoachPositionsStr:
                                 if field.value == pos:
-                                    await user.add_roles(knightServerRolesObj[index][0])
+                                    await user.add_roles(knightServerRolesObj[index])
                                     coachingRolesSTR.append(pos)
                                 index += 1
                     elif field.name == "Which Staff Position are you applying for?" or field.name == "Which Staff Position are you applying for? (cont.)":
                         if field.value:
                             index = 10
                             staff = True
-                            await user.add_roles(knightServerRolesObj[27][0]) # staff to apply role
+                            await user.add_roles(knightServerRolesObj[27]) # staff to apply role
                             for positions in knightsStaffPositionsStr:
                                 if field.value == positions:
-                                    await user.add_roles(knightServerRolesObj[index][0])
+                                    await user.add_roles(knightServerRolesObj[index])
                                     staffRolesSTR.append(positions)
                                 index += 1
 
@@ -750,17 +750,19 @@ async def create(ctx, header, descriptor, field1Name, field1value, footer):
     elif ctx.message.channel.id == reactionRolesID:
         pass
 
-@client.command()
-async def embeding(ctx, *args):
-    print("In")
+@client.command(pass_context=True)
+async def embeding(ctx, chan_name, num_emojis):
+    emoji_number = int(num_emojis)
+
     title1 = "Welcome to Sir Gallahad Embedded Messaging"
-    desc = "The way this'll work is I'll ask you for each aspect of the embedded message including: title, description, field name, field value, add field, footer."
+    desc = "This is a multi-step process to create an announcement where members of your server can assign their own roles through reacting to the message this process creates.\n\nTo start please enter the title you would like."
     embed=discord.Embed(title=title1,
                         description=desc,
                         color=0x109319)
     embed.set_author(name=ctx.author.display_name, icon_url=ctx.author.avatar_url)
 
     msg1 = await ctx.send(embed=embed)
+    await ctx.message.delete()
 
     def check(msg):
         return msg.author == ctx.message.author and msg.channel == ctx.message.channel
@@ -773,8 +775,7 @@ async def embeding(ctx, *args):
     await msg1.delete()
     title1 = msg.content
 
-    embed1=discord.Embed(title="What would you like your description to be?",
-                         description="testing",
+    embed1=discord.Embed(title="Please enter the description you would like for the message.",
                          color=0x109319)
     embed1.set_author(name=ctx.author.display_name, icon_url=ctx.author.avatar_url)
     msg1 = await ctx.send(embed=embed1)
@@ -789,41 +790,36 @@ async def embeding(ctx, *args):
     counter = 0
     field_text = [""] * 20
 
-    embed2=discord.Embed(title="Do you want a Field?",
-                         description="If you don't then please respond with 'No'. If you do then please respond with 'Yes'.",
-                         color=0x109319)
-    embed2.set_author(name=ctx.author.display_name, icon_url=ctx.author.avatar_url)
-    msg1 = await ctx.send(embed=embed2)
-
-    enter_loop = await client.wait_for("message", check=check)
-    message_id = enter_loop.id
-    message_delete = await ctx.message.channel.fetch_message(message_id)
-
-    await message_delete.delete()
-    await msg1.delete()
-    enter_loop = enter_loop.content
-
     counter = 0
     field_num = 0
-    while counter < 20 and field_text[counter] != "No" and field_text[counter] != "Exit" and enter_loop != "No":
-        embed3=discord.Embed(title="What would you like for your field title?",
-                            color=0x109319)
-        embed3.set_author(name=ctx.author.display_name, icon_url=ctx.author.avatar_url)
-        msg1 = await ctx.send(embed=embed3)
 
-        msg_content = await client.wait_for("message", check=check)
-        print(f'{field_text[counter]}')
-        message_id = msg_content.id
-        message_delete = await ctx.message.channel.fetch_message(message_id)
-        await message_delete.delete()
-        await msg1.delete()
-        field_text[counter] = msg_content.content
+    while emoji_number != 0:
+        if emoji_number == int(num_emojis):
+            embed3=discord.Embed(title="IMPORTANT INFORMATION",
+                                 description="There is a set list of emojis for creating the fields. You are able to create 10 fields each with it's own corresponding emoji.\nHowever, these emojis are already set and will only be created in the order set in the footer.",
+                                 color=0x109319)
+            embed3.set_author(name=ctx.author.display_name, icon_url=ctx.author.avatar_url)
+            embed3.set_footer(text="watermelon, bagel, bacon, pancakes, fortune cookie, ramen, ice cream, fries, cake")
+            msg2 = await ctx.send(embed=embed3)
 
-        embed4=discord.Embed(title="What value would you like for the previous field?",
+        embed4=discord.Embed(title="Please enter the title you would like for this field.",
                             color=0x109319)
         embed4.set_author(name=ctx.author.display_name, icon_url=ctx.author.avatar_url)
         msg1 = await ctx.send(embed=embed4)
 
+        msg_content = await client.wait_for("message", check=check)
+        message_id = msg_content.id
+        message_delete = await ctx.message.channel.fetch_message(message_id)
+        await message_delete.delete()
+        await msg1.delete()
+        field_text[counter] = msg_content.content
+
+        embed5=discord.Embed(title="Please enter the description you would like for the field you added a moment ago.",
+                            color=0x109319)
+        embed5.set_author(name=ctx.author.display_name, icon_url=ctx.author.avatar_url)
+        msg1 = await ctx.send(embed=embed5)
+
+        emoji_number = emoji_number - 1
         counter = counter + 1
 
         msg_content = await client.wait_for("message", check=check)
@@ -832,29 +828,14 @@ async def embeding(ctx, *args):
         await message_delete.delete()
         await msg1.delete()
         field_text[counter] = msg_content.content
-
-        embed5=discord.Embed(title="Do you want another Field?",
-                            description="If you don't then please respond with 'No'. If you do then please respond with 'Yes'.",
-                            color=0x109319)
-        embed5.set_author(name=ctx.author.display_name, icon_url=ctx.author.avatar_url)
-        msg1 = await ctx.send(embed=embed5)
-
-        enter_loop = await client.wait_for("message", check=check)
-        message_id = enter_loop.id
-        message_delete = await ctx.message.channel.fetch_message(message_id)
-
-        await message_delete.delete()
-        await msg1.delete()
-        enter_loop = enter_loop.content
-
-        field_num = field_num + 1
         counter = counter + 1
 
-    # Create the embed 
-    embed6=discord.Embed(title=title1,
+    await msg2.delete()
+
+    embed7=discord.Embed(title=title1,
                          description=description1,
                          color=0x109319)
-    embed6.set_author(name=ctx.author.display_name, icon_url=ctx.author.avatar_url)
+    embed7.set_author(name=ctx.author.display_name, icon_url=ctx.author.avatar_url)
 
     index = 0
     index1 = 0
@@ -864,20 +845,75 @@ async def embeding(ctx, *args):
             index = index + 1
             field_value = field_text[index]
 
-            print(f'{field_name}')
-
-            embed6.add_field(name=field_name,
+            embed7.add_field(name=field_name,
                             value=field_value,
-                            inline=True)
+                            inline=False)
 
             index = index + 1 
             index1 = index1 + 1
         else:
             break
 
-    await ctx.send(embed=embed6)
+    fin = await ctx.send(embed=embed7)
 
-    print(f'{ctx.message.content}')
+    emoji_number = int(num_emojis)
+
+    chan_name = discord.utils.get(ctx.guild.channels, name=chan_name)
+    if fin.channel.id == chan_name.id:
+        reacts = ["\U0001F349", "\U0001F96F", "\U0001F953", "\U0001F95E", "\U0001F960", "\U0001F35C", "\U0001F366", "\U0001F35F", "\U0001F370"]
+        index = 0
+        while emoji_number != 0:
+            print(f'{emoji_number}')
+            await fin.add_reaction(reacts[index])
+            emoji_number = emoji_number - 1
+            index = index + 1
+
+# Create command to delete every message in the channel
+@client.command(pass_context=True, aliases=['Purge', 'purge', 'Remove', 'remove', 'Elim', 'elim'])
+async def Emancipate(ctx, multiple, amount):
+    if multiple != "Skip" and multiple != "skip" and multiple != "s":
+        num = amount * multiple
+    else:
+        num = amount
+    embed=discord.Embed(title=f'Are you sure you would like to delete {num} messages?',
+                        description="If this is correct enter 'Yes'. If this is incorrect enter 'No'. Please bear in mind that the maximum number of messages you can delete at a time is 99.",
+                        color=0x109319)
+    embed.set_footer(text="If you enter 'Yes' there is no going back. The messages will be deleted forever.")
+    msg1 = await ctx.send(embed=embed)
+
+    await ctx.message.delete()
+
+    def check(msg):
+        return msg.author == ctx.message.author and msg.channel == ctx.message.channel
+
+    msg = await client.wait_for("message", check=check)
+    message_id = msg.id
+    message_delete = await ctx.message.channel.fetch_message(message_id)
+
+    await message_delete.delete()
+    await msg1.delete()
+    answer = msg.content
+
+    if answer == "Yes" or answer == "yes" or answer == "y":
+        if multiple != "Skip" and multiple != "skip" and multiple != "s":
+            while multiple != 0:
+                await ctx.channel.purge(limit=int(amount))
+                multiple = int(multiple) - 1
+        else:
+            await ctx.channel.purge(limit=int(amount))
+
+    else:
+        embed2=discord.Embed(title="The command has been successfully aborted",
+                            color=0x109319)
+        msg1 = await ctx.send(embed=embed2)
+
+        msg = await client.wait_for("message", check=check)
+        message_id = msg.id
+        message_delete = await ctx.message.channel.fetch_message(message_id)
+
+        await message_delete.delete()
+        await msg1.delete()
+
 
 @client.command()
 async def test(ctx):
