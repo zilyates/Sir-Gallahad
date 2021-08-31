@@ -569,7 +569,7 @@ async def on_message(message):
 
 
 
-def createPhysics5A():
+def create_objects():
     physics5A = client.get_guild(881917444325793824)
     psych149 = client.get_guild(881971226002751548)
     testing_server = client.get_guild(793351956210384907)
@@ -595,7 +595,7 @@ async def on_raw_reaction_add(payload):
     bots_ots = 882016451807023104
     roles_channel = 881980026214559775
 
-    host, tutor, group1, group2, group3, group4, group5, group6, group7, group8, group9, psych, physics5A, testing_server, na = createPhysics5A()
+    host, tutor, group1, group2, group3, group4, group5, group6, group7, group8, group9, psych, physics5A, testing_server, na = create_objects()
     gallahad = psych.get_member(802668851434487830)
 
     if payload.guild_id == 881971226002751548 and payload.user_id != 802668851434487830:
@@ -628,7 +628,7 @@ async def on_raw_reaction_remove(payload):
     reactionRolesID = 881960753710645259
     bots_ots = 882016451807023104
     roles_channel = 881980026214559775
-    host, tutor, group1, group2, group3, group4, group5, group6, group7, group8, group9, psych, physics5A, testing_server, na = createPhysics5A()
+    host, tutor, group1, group2, group3, group4, group5, group6, group7, group8, group9, psych, physics5A, testing_server, na = create_objects()
 
     if payload.guild_id == 881917444325793824:
         member = physics5A.get_member(payload.user_id)
@@ -733,31 +733,6 @@ async def suspend(ctx, named, times, reason):
             await ctx.send("ERROR 101: One or more of the channels has been deleted. Command aborted")
     else:
         await ctx.send("ERROR 100 User not found. Common reasons include: spelling, capitilization, numbers. Command aborted")
-
-## CREATE EMBED
-@client.command(pass_context=True, aliases=['reaction', 'reaction_roles', 'create_embed'])
-async def create(ctx, header, descriptor, field1Name, field1value, footer):
-    embed=discord.Embed(title=header,
-                        description=descriptor,
-                        color=0x109319)
-    embed.set_author(name=ctx.author.display_name, icon_url=ctx.author.avatar_url)
-    embed.add_field(name=field1Name, value=field1value)
-
-    embed.set_footer(text=footer)
-
-    msg = await ctx.send(embed=embed)
-    await ctx.message.delete()
-
-    reactionRolesID = 881960753710645259
-    bots_ots = 882016451807023104
-    roles_channel = 881980026214559775
-
-    if ctx.message.channel.id == bots_ots or ctx.message.channel.id == roles_channel:
-        reacts = ["\U0001F349", "\U0001F96F", "\U0001F953", "\U0001F95E", "\U0001F960", "\U0001F35C", "\U0001F366", "\U0001F35F", "\U0001F370"]
-        for emoji in reacts:
-            await msg.add_reaction(emoji)
-    elif ctx.message.channel.id == reactionRolesID:
-        pass
 
 @client.command(pass_context=True)
 async def embeding(ctx, chan_name, num_emojis):
@@ -887,7 +862,6 @@ async def embeding(ctx, chan_name, num_emojis):
             emoji_number = emoji_number - 1
             index = index + 1
 
-# Create command to delete every message in the channel
 @client.command(pass_context=True, aliases=['Purge', 'purge', 'Remove', 'remove', 'Elim', 'elim'])
 async def Emancipate(ctx, multiple, amount):
     if multiple != "Skip" and multiple != "skip" and multiple != "s":
@@ -932,7 +906,6 @@ async def Emancipate(ctx, multiple, amount):
 
         await message_delete.delete()
         await msg1.delete()
-
 
 @client.command()
 async def ping(ctx):
