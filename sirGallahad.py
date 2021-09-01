@@ -3,6 +3,7 @@ import asyncio
 from datetime import datetime
 from discord.ext import commands
 import unicodedata
+import json
 
 intents = discord.Intents.default()
 intents.members = True
@@ -225,34 +226,37 @@ guilder = client.get_guild(695831785900081212)
 
 @client.event
 async def on_member_join(member):
-    joiner = await member.create_dm()
-    await joiner.send(welcomeMessageFinal)
+    if member.guild.id == 695831785900081212:
+        joiner = await member.create_dm()
+        await joiner.send(welcomeMessageFinal)
 
-    now = datetime.now()
-    dt_string = now.strftime("%d/%m/%Y %H:%M:%S")
-    print(f'{dt_string}')
-    print(f'{member} joined the server')
-
-    ## This works for excalibur knights specifically cuz the other server has another bot giving newcomers role
-    guild = client.get_guild(695831785900081212)
-    newComer = member.guild.get_role(801188644932288553)
-    await member.add_roles(newComer)
-
-    await asyncio.sleep(10800)
-    
-    channel = await member.create_dm()
-    if newComer in member.roles:
-        await channel.send(warning)
-
-    await asyncio.sleep(2700)
-
-    member_renewed = guild.get_member(member.id)
-    if newComer in member_renewed.roles:
         now = datetime.now()
         dt_string = now.strftime("%d/%m/%Y %H:%M:%S")
         print(f'{dt_string}')
-        print(f'{member} did not submit the form and was kicked')
-        await member.kick()
+        print(f'{member} joined the server')
+
+        ## This works for excalibur knights specifically cuz the other server has another bot giving newcomers role
+        guild = client.get_guild(695831785900081212)
+        newComer = member.guild.get_role(801188644932288553)
+        await member.add_roles(newComer)
+
+        await asyncio.sleep(10800)
+    
+        channel = await member.create_dm()
+        if newComer in member.roles:
+            await channel.send(warning)
+
+        await asyncio.sleep(2700)
+
+        member_renewed = guild.get_member(member.id)
+        if newComer in member_renewed.roles:
+            now = datetime.now()
+            dt_string = now.strftime("%d/%m/%Y %H:%M:%S")
+            print(f'{dt_string}')
+            print(f'{member} did not submit the form and was kicked')
+            await member.kick()
+    else:
+        pass
 
 @client.event
 async def on_message(message):
@@ -467,8 +471,8 @@ async def on_message(message):
                 if playerRolesSTR:
                     embed.add_field(name="Player Role", value=playerRolesSTR[0], inline=False)
 
-                chan = await myself.create_dm()
-                await chan.send(embed=embed)
+                #chan = await myself.create_dm()
+                #await chan.send(embed=embed)
 
             else:
                 print("ERROR 101: user is null")
@@ -567,12 +571,26 @@ async def on_message(message):
 
     await client.process_commands(message)
 
-
-
+data = {}
+global_message_id = [None] * 1000
+global_counter = 0
 def create_objects():
     physics5A = client.get_guild(881917444325793824)
     psych149 = client.get_guild(881971226002751548)
     testing_server = client.get_guild(793351956210384907)
+
+    # make this function a command for the bot to loop through roles and create objects in the required guild, called only once
+    # can make this thing called by the embeding command so it's only called once
+    # but actually I don't want this called every time the embed is made only once per server
+    # or wait once per embed and the person specifies which roles they want to instantiate
+
+    # but how to give the roles to the on raw reaction add and remove functions
+
+    # the loop would store the objects in a list
+
+    # pass payload.guild_id into this function to instantiate only the guild needed
+
+    # pass this function the name and guild id
 
     host = physics5A.get_member_named("Zilya#4818")
     tutor = physics5A.get_role(881919160257490976)
@@ -589,78 +607,244 @@ def create_objects():
 
     return host, tutor, group1, group2, group3, group4, group5, group6, group7, group8, group9, psych149, physics5A, testing_server, na
 
+#def instantiate_role_objects(guild_id, role_id, emoji_name_list, check):
+#    if check != 1: 
+#        current_guild = client.get_guild(guild_id)
+#        current_role = current_guild.get_role(role_id)
+#    else:
+#        pass
+
+# caller, guild id, user id, element                           emoji name, check
+
+
+#current_guild = client.get_guild(arg[1])
+#count = 0
+#while count < 10:
+#    role_objects[count] = current_guild.get_role(int(role_ids[trav]))
+#    count = count + 1
+#    return role_objects
+
+file_name = ""
+
+def algorithm(*arg):
+    current_guild = client.get_guild(arg[0])
+    count = 0
+    number_ids = arg[3]
+    while number_ids > 0:
+        print(f'Here is the arg 2 type: {type(arg[2][count])}')
+        # Arg[2][count] is an empty string so it never enters the if statement
+        print(f'Here is the arg 2 type: {arg[2][count]}')
+        if arg[2][count] != "":
+            arg[1][count] = current_guild.get_role(int(arg[2][count]))
+            print(f'Here is the arg 1 in the while loop: {arg[1][count]}')
+        else:
+            break
+        count = count + 1
+        number_ids = number_ids - 1
+
+    ## arg[1] returning a full list of None types
+    print(f'Arg1: {arg[1]}')
+    return arg[1]
+
+# arg4 is for  the embedded message id
+def role_making(*arg):
+    if arg[0] != 1:
+        role_ids = [""] * 10
+        role_objects = [None] * 10
+
+        with open('data.txt', 'r') as file:
+            info = json.load(file)
+            check = 0
+            for stuff in data[arg[4]]:
+                role_ids[check] = stuff[f'id_{check}']
+                check = check + 1
+
+        #with open("Roles ID.txt", "r") as get_role_ids:
+        #    index = 0
+        #    get_role_ids.seek(0, 0)
+        #    role_ids[index] = get_role_ids.readline()
+        #    end_msg = ""
+        #    for element in role_ids[index]:
+        #        if element.isnumeric():
+        #            end_msg = end_msg + element
+        #        else:
+        #            pass
+            
+            # I don't think it ever enters this while loop
+            #role_ids[index] = end_msg
+            #print(f'Role id at opening of file: {role_ids[index]}')
+            #while (role_ids[index] != ""):
+            #    index = index + 1
+            #    role_ids[index] = get_role_ids.readline()
+
+        number_ids = len(role_ids)
+        print(f'{number_ids}')
+
+        # Amandas psychology server
+        if arg[1] == 881971226002751548 and arg[2] != 802668851434487830:
+            object_list = algorithm(arg[1], role_objects, role_ids, number_ids)
+            return object_list[arg[3]]
+
+        # Nathans testing server
+        elif arg[1] == 793351956210384907 and arg[2] != 802668851434487830:
+            print("in role at right server")
+            # ERROR #
+            #role objects is the arg[2] that is being sent and is still a list full of None types
+            object_list = algorithm(arg[1], role_objects, role_ids, number_ids)
+            # object list is returning a list full of None types
+            print(f'Object list: {object_list}')
+            return object_list[arg[3]]
+
+        # Nathans physics server
+        elif arg[1] == 793351956210384907 and arg[2] != 802668851434487830:
+            object_list = algorithm(arg[1], role_objects, role_ids, number_ids)
+            return object_list[arg[3]]
+    else:
+        pass
+
+testing = "Yay"
 @client.event
 async def on_raw_reaction_add(payload):
     reactionRolesID = 881960753710645259
     bots_ots = 882016451807023104
     roles_channel = 881980026214559775
+    caller = 0
+    embed_id = None
 
-    host, tutor, group1, group2, group3, group4, group5, group6, group7, group8, group9, psych, physics5A, testing_server, na = create_objects()
-    gallahad = psych.get_member(802668851434487830)
+    #host, tutor, group1, group2, group3, group4, group5, group6, group7, group8, group9, psych, physics5A, testing_server, na = create_objects()
+    #gallahad = psych.get_member(802668851434487830)
 
+    print(f'{payload.user_id}')
+
+    embed_id = payload.message_id
+
+    # Amandas psychology server
     if payload.guild_id == 881971226002751548 and payload.user_id != 802668851434487830:
-        if payload.emoji.name == "thinky_snake":
-            await payload.member.add_roles(tutor)
-        elif unicodedata.name(payload.emoji.name) == "WATERMELON":
-            await payload.member.add_roles(group1)
+        if unicodedata.name(payload.emoji.name) == "WATERMELON":
+            await payload.member.add_roles(role_making(caller, payload.guild_id, payload.user_id, 0, embed_id))
         elif unicodedata.name(payload.emoji.name) == "BAGEL":
-            await payload.member.add_roles(group2)
+            await payload.member.add_roles(role_making(caller, payload.guild_id, payload.user_id, 1, embed_id))
         elif unicodedata.name(payload.emoji.name) == "BACON":
-            await payload.member.add_roles(group3)
+            await payload.member.add_roles(role_making(caller, payload.guild_id, payload.user_id, 2, embed_id))
         elif unicodedata.name(payload.emoji.name) == "PANCAKES":
-            await payload.member.add_roles(group4)
+            await payload.member.add_roles(role_making(caller, payload.guild_id, payload.user_id, 3, embed_id))
         elif unicodedata.name(payload.emoji.name) == "FORTUNE COOKIE":
-            await payload.member.add_roles(group5)
+            await payload.member.add_roles(role_making(caller, payload.guild_id, payload.user_id, 4, embed_id))
         elif unicodedata.name(payload.emoji.name) == "STEAMING BOWL":
-            await payload.member.add_roles(group6)
+            await payload.member.add_roles(role_making(caller, payload.guild_id, payload.user_id, 5, embed_id))
         elif unicodedata.name(payload.emoji.name) == "SOFT ICE CREAM":
-            await payload.member.add_roles(group7)
+            await payload.member.add_roles(role_making(caller, payload.guild_id, payload.user_id, 6, embed_id))
         elif unicodedata.name(payload.emoji.name) == "FRENCH FRIES":
-            await payload.member.add_roles(group8)
+            await payload.member.add_roles(role_making(caller, payload.guild_id, payload.user_id, 7, embed_id))
         elif unicodedata.name(payload.emoji.name) == "SHORTCAKE":
-            await payload.member.add_roles(group9)
+            await payload.member.add_roles(role_making(caller, payload.guild_id, payload.user_id, 8, embed_id))
+    # Nathans testing server
     elif payload.guild_id == 793351956210384907 and payload.user_id != 802668851434487830:
         if unicodedata.name(payload.emoji.name) == "WATERMELON":
-            await payload.member.add_roles(na)
+            # Role making is returning None
+            await payload.member.add_roles(role_making(caller, payload.guild_id, payload.user_id, 0, embed_id))
+        elif unicodedata.name(payload.emoji.name) == "BAGEL":
+            await payload.member.add_roles(role_making(caller, payload.guild_id, payload.user_id, 1, embed_id))
+        elif unicodedata.name(payload.emoji.name) == "BACON":
+            await payload.member.add_roles(role_making(caller, payload.guild_id, payload.user_id, 2, embed_id))
+        elif unicodedata.name(payload.emoji.name) == "PANCAKES":
+            await payload.member.add_roles(role_making(caller, payload.guild_id, payload.user_id, 3, embed_id))
+        elif unicodedata.name(payload.emoji.name) == "FORTUNE COOKIE":
+            await payload.member.add_roles(role_making(caller, payload.guild_id, payload.user_id, 4, embed_id))
+        elif unicodedata.name(payload.emoji.name) == "STEAMING BOWL":
+            await payload.member.add_roles(role_making(caller, payload.guild_id, payload.user_id, 5, embed_id))
+        elif unicodedata.name(payload.emoji.name) == "SOFT ICE CREAM":
+            await payload.member.add_roles(role_making(caller, payload.guild_id, payload.user_id, 6, embed_id))
+        elif unicodedata.name(payload.emoji.name) == "FRENCH FRIES":
+            await payload.member.add_roles(role_making(caller, payload.guild_id, payload.user_id, 7, embed_id))
+        elif unicodedata.name(payload.emoji.name) == "SHORTCAKE":
+            await payload.member.add_roles(role_making(caller, payload.guild_id, payload.user_id, 8, embed_id))
 
 @client.event
 async def on_raw_reaction_remove(payload):
     reactionRolesID = 881960753710645259
     bots_ots = 882016451807023104
     roles_channel = 881980026214559775
-    host, tutor, group1, group2, group3, group4, group5, group6, group7, group8, group9, psych, physics5A, testing_server, na = create_objects()
-
+    caller = 0
+    #host, tutor, group1, group2, group3, group4, group5, group6, group7, group8, group9, psych, physics5A, testing_server, na = create_objects()
+    
     if payload.guild_id == 881917444325793824:
+        physics5A = client.get_guild(881917444325793824)
         member = physics5A.get_member(payload.user_id)
     elif payload.guild_id == 881971226002751548:
+        psych = client.get_guild(881971226002751548)
         member = psych.get_member(payload.user_id)
     elif payload.guild_id == 793351956210384907:
+        testing_server = client.get_guild(793351956210384907)
         member = testing_server.get_member(payload.user_id)
 
+    embed_id = payload.message_id
+
+    #if payload.guild_id == 881971226002751548 and payload.user_id != 802668851434487830:
+    #    if payload.emoji.name == "thinky_snake":
+    #        await member.remove_roles(tutor)
+    #    elif unicodedata.name(payload.emoji.name) == "WATERMELON":
+    #        await member.remove_roles(group1)
+    #    elif unicodedata.name(payload.emoji.name) == "BAGEL":
+    #        await member.remove_roles(group2)
+    #    elif unicodedata.name(payload.emoji.name) == "BACON":
+    #        await member.remove_roles(group3)
+    #    elif unicodedata.name(payload.emoji.name) == "PANCAKES":
+    #        await member.remove_roles(group4)
+    #    elif unicodedata.name(payload.emoji.name) == "FORTUNE COOKIE":
+    #        await member.remove_roles(group5)
+    #    elif unicodedata.name(payload.emoji.name) == "STEAMING BOWL":
+    #        await member.remove_roles(group6)
+    #    elif unicodedata.name(payload.emoji.name) == "SOFT ICE CREAM":
+    #        await member.remove_roles(group7)
+    #    elif unicodedata.name(payload.emoji.name) == "FRENCH FRIES":
+    #        await member.remove_roles(group8)
+    #    elif unicodedata.name(payload.emoji.name) == "SHORTCAKE":
+    #        await member.remove_roles(group9)
+    #if payload.guild_id == 793351956210384907 and payload.user_id != 802668851434487830:
+    #    if unicodedata.name(payload.emoji.name) == "WATERMELON":
+    #        await member.remove_roles(na)
+    # Amandas psychology server
     if payload.guild_id == 881971226002751548 and payload.user_id != 802668851434487830:
-        if payload.emoji.name == "thinky_snake":
-            await member.remove_roles(tutor)
-        elif unicodedata.name(payload.emoji.name) == "WATERMELON":
-            await member.remove_roles(group1)
-        elif unicodedata.name(payload.emoji.name) == "BAGEL":
-            await member.remove_roles(group2)
-        elif unicodedata.name(payload.emoji.name) == "BACON":
-            await member.remove_roles(group3)
-        elif unicodedata.name(payload.emoji.name) == "PANCAKES":
-            await member.remove_roles(group4)
-        elif unicodedata.name(payload.emoji.name) == "FORTUNE COOKIE":
-            await member.remove_roles(group5)
-        elif unicodedata.name(payload.emoji.name) == "STEAMING BOWL":
-            await member.remove_roles(group6)
-        elif unicodedata.name(payload.emoji.name) == "SOFT ICE CREAM":
-            await member.remove_roles(group7)
-        elif unicodedata.name(payload.emoji.name) == "FRENCH FRIES":
-            await member.remove_roles(group8)
-        elif unicodedata.name(payload.emoji.name) == "SHORTCAKE":
-            await member.remove_roles(group9)
-    if payload.guild_id == 793351956210384907 and payload.user_id != 802668851434487830:
         if unicodedata.name(payload.emoji.name) == "WATERMELON":
-            await member.remove_roles(na)
+            await member.remove_roles(role_making(caller, payload.guild_id, payload.user_id, 0, embed_id))
+        elif unicodedata.name(payload.emoji.name) == "BAGEL":
+            await member.remove_roles(role_making(caller, payload.guild_id, payload.user_id, 1, embed_id))
+        elif unicodedata.name(payload.emoji.name) == "BACON":
+            await member.remove_roles(role_making(caller, payload.guild_id, payload.user_id, 2, embed_id))
+        elif unicodedata.name(payload.emoji.name) == "PANCAKES":
+            await member.remove_roles(role_making(caller, payload.guild_id, payload.user_id, 3, embed_id))
+        elif unicodedata.name(payload.emoji.name) == "FORTUNE COOKIE":
+            await member.remove_roles(role_making(caller, payload.guild_id, payload.user_id, 4, embed_id))
+        elif unicodedata.name(payload.emoji.name) == "STEAMING BOWL":
+            await member.remove_roles(role_making(caller, payload.guild_id, payload.user_id, 5, embed_id))
+        elif unicodedata.name(payload.emoji.name) == "SOFT ICE CREAM":
+            await member.remove_roles(role_making(caller, payload.guild_id, payload.user_id, 6, embed_id))
+        elif unicodedata.name(payload.emoji.name) == "FRENCH FRIES":
+            await member.remove_roles(role_making(caller, payload.guild_id, payload.user_id, 7, embed_id))
+        elif unicodedata.name(payload.emoji.name) == "SHORTCAKE":
+            await member.remove_roles(role_making(caller, payload.guild_id, payload.user_id, 8, embed_id))
+    # Nathans testing server
+    elif payload.guild_id == 793351956210384907 and payload.user_id != 802668851434487830:
+        if unicodedata.name(payload.emoji.name) == "WATERMELON":
+            # Role making is returning None
+            await member.remove_roles(role_making(caller, payload.guild_id, payload.user_id, 0, embed_id))
+        elif unicodedata.name(payload.emoji.name) == "BAGEL":
+            await member.remove_roles(role_making(caller, payload.guild_id, payload.user_id, 1, embed_id))
+        elif unicodedata.name(payload.emoji.name) == "BACON":
+            await member.remove_roles(role_making(caller, payload.guild_id, payload.user_id, 2, embed_id))
+        elif unicodedata.name(payload.emoji.name) == "PANCAKES":
+            await member.remove_roles(role_making(caller, payload.guild_id, payload.user_id, 3, embed_id))
+        elif unicodedata.name(payload.emoji.name) == "FORTUNE COOKIE":
+            await member.remove_roles(role_making(caller, payload.guild_id, payload.user_id, 4, embed_id))
+        elif unicodedata.name(payload.emoji.name) == "STEAMING BOWL":
+            await member.remove_roles(role_making(caller, payload.guild_id, payload.user_id, 5, embed_id))
+        elif unicodedata.name(payload.emoji.name) == "SOFT ICE CREAM":
+            await member.remove_roles(role_making(caller, payload.guild_id, payload.user_id, 6, embed_id))
+        elif unicodedata.name(payload.emoji.name) == "FRENCH FRIES":
+            await member.remove_roles(role_making(caller, payload.guild_id, payload.user_id, 7, embed_id))
+        elif unicodedata.name(payload.emoji.name) == "SHORTCAKE":
+            await member.remove_roles(role_making(caller, payload.guild_id, payload.user_id, 8, embed_id))
 
 reasonForSus = "Hello {member}, {commander} has decided to suspend you due to you breaking the rules of the server. Plz review and refresh your knowledge by visiting the rules channel"
 
@@ -736,7 +920,15 @@ async def suspend(ctx, named, times, reason):
 
 @client.command(pass_context=True)
 async def embeding(ctx, chan_name, num_emojis):
+    role_ids_list = [""] * 10
+    ## IMPORTANT #
+    ## Need to find a different way cuz then when a new message is created the old one can't be reacted to
+    #with open("Roles ID.txt", "r+") as delete:
+    #    delete.truncate(0)
+
     emoji_number = int(num_emojis)
+    end_msg = ""
+    line = 0
 
     title1 = "Welcome to Sir Gallahad Embedded Messaging"
     desc = "This is a multi-step process to create an announcement where members of your server can assign their own roles through reacting to the message this process creates.\n\nTo start please enter the title you would like."
@@ -747,6 +939,7 @@ async def embeding(ctx, chan_name, num_emojis):
     embed.set_footer(text="This process only allows for 9 fields maximum to be created. If you would like more please contact the creator Zilya#4818")
 
     msg1 = await ctx.send(embed=embed)
+    origin = ctx.message.id
     await ctx.message.delete()
 
     def check(msg):
@@ -777,6 +970,7 @@ async def embeding(ctx, chan_name, num_emojis):
 
     counter = 0
     field_num = 0
+    iterate_role_ids = 0
 
     while emoji_number != 0:
         if emoji_number == int(num_emojis):
@@ -799,15 +993,14 @@ async def embeding(ctx, chan_name, num_emojis):
         await msg1.delete()
         field_text[counter] = msg_content.content
 
+        counter = counter + 1
+
         embed5=discord.Embed(title="Please enter the description you would like for the field you added a moment ago.",
-                            color=0x109319)
+                             color=0x109319)
         embed5.set_author(name=ctx.author.display_name, icon_url=ctx.author.avatar_url)
         embed5.set_footer(text="If you don't want a description for the previous field title you may enter 'Skip' to leave this empty.")
 
         msg1 = await ctx.send(embed=embed5)
-
-        emoji_number = emoji_number - 1
-        counter = counter + 1
 
         msg_content = await client.wait_for("message", check=check)
         message_id = msg_content.id
@@ -819,8 +1012,44 @@ async def embeding(ctx, chan_name, num_emojis):
         if field_text[counter].lower() == "skip":
             field_text[counter] = ""
 
-        counter = counter + 1
+        # IMPORTANT RIGHT HERE #
+        # Create question to ask which role they want corresponding to this title
+        # pass name to a fucntion that gets the id and makes the object
+        embed6=discord.Embed(title="What role would you like to have associated with this field you added a moment ago?",
+                             value="When giving the role please send a message pinging the just the role.",
+                             color=0x109319)
+        embed6.set_author(name=ctx.author.display_name, icon_url=ctx.author.avatar_url)
 
+        msg1 = await ctx.send(embed=embed6)
+
+        msg_content = await client.wait_for("message", check=check)
+        message_id = msg_content.id
+        message_delete = await ctx.message.channel.fetch_message(message_id)
+
+        end_msg = ""
+        for element in msg_content.content:
+            if element.isnumeric():
+                end_msg = end_msg + element
+            else:
+                pass
+
+        role_ids_list[iterate_role_ids] = end_msg
+        #with open(file_name, "a") as role_id_file:
+        #    #role_id_file.seek(0, 1)
+        #    role_id_file.write(end_msg)
+        #    role_id_file.write("\n")
+        #    #print(role_id_file.tell())
+        #    print(f'{end_msg} written to file')
+
+        await message_delete.delete()
+        await msg1.delete()
+
+        emoji_number = emoji_number - 1
+        counter = counter + 1
+        iterate_role_ids = iterate_role_ids + 1
+        line = line + 1
+
+    role_making(1)
     await msg2.delete()
 
     embed7=discord.Embed(title=title1,
@@ -851,8 +1080,25 @@ async def embeding(ctx, chan_name, num_emojis):
 
     fin = await ctx.send(embed=embed7)
 
+    ## ADD THIS COMMANDS IDS TO JSON FILE UNDER ORIGIN ID
+    number_of_ids = len(role_ids_list)
+    check = 0
+    data[fin.id] = []
+    while check < number_of_ids:
+        data[fin.id].append({
+            f'id_{check}': role_ids_list[check]})
+        check = check + 1
+    with open('roles_ids.txt', 'w') as file:
+        json.dump(data, file)
+
+    global global_message_id
+    global global_counter
+    global_message_id[global_counter] = fin.id
+    global_counter = global_counter + 1
+
     emoji_number = int(num_emojis)
 
+    # THIS NEEDS TO CHANGE # 
     chan_name = discord.utils.get(ctx.guild.channels, name=chan_name)
     if fin.channel.id == chan_name.id:
         reacts = ["\U0001F349", "\U0001F96F", "\U0001F953", "\U0001F95E", "\U0001F960", "\U0001F35C", "\U0001F366", "\U0001F35F", "\U0001F370"]
@@ -861,6 +1107,9 @@ async def embeding(ctx, chan_name, num_emojis):
             await fin.add_reaction(reacts[index])
             emoji_number = emoji_number - 1
             index = index + 1
+    # Here call the function to do the stuff and instantiate the object 
+    #instantiate_role_objects(fin.guild.id, end_msg, reacts, 1)
+    #store_needed_emojis(end_msg)
 
 @client.command(pass_context=True, aliases=['Purge', 'purge', 'Remove', 'remove', 'Elim', 'elim'])
 async def Emancipate(ctx, multiple, amount):
@@ -907,8 +1156,34 @@ async def Emancipate(ctx, multiple, amount):
         await message_delete.delete()
         await msg1.delete()
 
-@client.command()
-async def ping(ctx):
-    await ctx.send("pong")
+@client.command(pass_context=True)
+async def ping(ctx, *args):
+    pass
+    #global global_counter
+    #global_counter = global_counter + 1
+    #print(global_counter)
+    #data[ctx.message.id] = []
+    #number_ids = int(args[0])
+    #print(f'Number of ids: {number_ids}')
+    #check = 0
+    #id_counter = 1
+    #while check < number_ids:
+    #    data[ctx.message.id].append({
+    #        f'id_{check}': args[id_counter]
+    #    })
+    #    print(f'ID: id_{check}')
+    #    print(f'Value: {args[id_counter]}')
+    #    check = check + 1
+    #    id_counter = id_counter + 1
+
+    #with open('data.txt', 'w') as file:
+    #    json.dump(data, file)
+
+    #with open('data.txt', 'r') as file:
+    #    info = json.load(file)
+    #    check = 0
+    #    for stuff in data[ctx.message.id]:
+    #        print(f'ID {check}: ' + stuff[f'id_{check}'])
+    #        check = check + 1
 
 client.run('ODAyNjY4ODUxNDM0NDg3ODMw.YAylnw.6liyEc11GCMnCYFulkjsLRYACDc')
