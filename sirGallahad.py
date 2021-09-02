@@ -609,35 +609,9 @@ def role_making(*arg):
         if arg[2] != 802668851434487830:
             object_list = algorithm(arg[1], role_objects, role_ids, number_ids)
             return object_list[arg[3]]
-
-        ## Amandas psychology server
-        #if arg[1] == 881971226002751548 and arg[2] != 802668851434487830:
-        #    object_list = algorithm(arg[1], role_objects, role_ids, number_ids)
-        #    return object_list[arg[3]]
-
-        ## Nathans testing server
-        #elif arg[1] == 793351956210384907 and arg[2] != 802668851434487830:
-        #    object_list = algorithm(arg[1], role_objects, role_ids, number_ids)
-        #    return object_list[arg[3]]
-
-        ## Nathans physics server
-        #elif arg[1] == 881917444325793824 and arg[2] != 802668851434487830:
-        #    object_list = algorithm(arg[1], role_objects, role_ids, number_ids)
-        #    return object_list[arg[3]]
-
-        ## Prototype testing server
-        #elif arg[1] == 882687948842221598 and arg[2] != 802668851434487830:
-        #    object_list = algorithm(arg[1], role_objects, role_ids, number_ids)
-        #    return object_list[arg[3]]
-
-        # Coffee's server
-        elif arg[1] == 882687948842221598 and arg[2] != 802668851434487830:
-            object_list = algorithm(arg[1], role_objects, role_ids, number_ids)
-            return object_list[arg[3]]
     else:
         pass
 
-# For some reason if I reacted to a later message in this thing it breaks the code and reacting to embed won't give a role
 @client.event
 async def on_raw_reaction_add(payload):
     global global_message_id
@@ -663,52 +637,13 @@ async def on_raw_reaction_add(payload):
     embed_id = payload.message_id
 
     if msg_id == True:
-        # Try to abstract guild so that don't have to hard code each guild since they're all identical
-        # The best way to do this might be to get all the ids from the guild when the bot joins the server
-        # Then sent it to a file using json and just call that json when I need it and traverse to find the right id
         if payload.user_id != 802668851434487830:
             check = 0
             while check < len(global_emojis) and found == False:
                 if unicodedata.name(payload.emoji.name) == global_emojis[check]:
-                    print(f'Payload guild id: {payload.guild_id}')
-                    print(f'Payload user id: {payload.user_id}')
-                    print(f'Embed id: {embed_id}')
                     await payload.member.add_roles(role_making(caller, payload.guild_id, payload.user_id, check, embed_id))
                     found = True
                 check = check + 1
-
-        ## Amandas psychology server
-        #if payload.guild_id == 881971226002751548 and payload.user_id != 802668851434487830:
-        #    check = 0
-        #    while check < len(global_emojis) and found == False:
-        #        if unicodedata.name(payload.emoji.name) == global_emojis[check]:
-        #            await payload.member.add_roles(role_making(caller, payload.guild_id, payload.user_id, check, embed_id))
-        #            found = True
-        #        check = check + 1
-        ## Nathans testing server
-        #elif payload.guild_id == 793351956210384907 and payload.user_id != 802668851434487830:
-        #    check = 0
-        #    while check < len(global_emojis) and found == False:
-        #        if unicodedata.name(payload.emoji.name) == global_emojis[check]:
-        #            await payload.member.add_roles(role_making(caller, payload.guild_id, payload.user_id, check, embed_id))
-        #            found = True
-        #        check = check + 1
-        ## Prototype testing server
-        #elif payload.guild_id == 882687948842221598 and payload.user_id != 802668851434487830:
-        #    check = 0
-        #    while check < len(global_emojis) and found == False:
-        #        if unicodedata.name(payload.emoji.name) == global_emojis[check]:
-        #            await payload.member.add_roles(role_making(caller, payload.guild_id, payload.user_id, check, embed_id))
-        #            found = True
-        #        check = check + 1
-        ## Coffee's server
-        #elif payload.guild_id == 851112881385898015 and payload.user_id != 802668851434487830:
-        #    check = 0
-        #    while check < len(global_emojis) and found == False:
-        #        if unicodedata.name(payload.emoji.name) == global_emojis[check]:
-        #            await payload.member.add_roles(role_making(caller, payload.guild_id, payload.user_id, check, embed_id))
-        #            found = True
-        #        check = check + 1
     else:
         pass
 
@@ -746,45 +681,9 @@ async def on_raw_reaction_remove(payload):
             check = 0
             while check < len(global_emojis) and found == False:
                 if unicodedata.name(payload.emoji.name) == global_emojis[check]:
-                    print(f'Deleting message function: Payload guild id: {payload.guild_id}')
-                    print(f'Deleting message function: Payload user id: {payload.user_id}')
-                    print(f'Deleting message function: Embed id: {embed_id}')
                     await member.remove_roles(role_making(caller, payload.guild_id, payload.user_id, check, embed_id))
                     found = True
                 check = check + 1
-
-        ## Amandas psychology server
-        #if payload.guild_id == 881971226002751548 and payload.user_id != 802668851434487830:
-        #    check = 0
-        #    while check < len(global_emojis) and found == False:
-        #        if unicodedata.name(payload.emoji.name) == global_emojis[check]:
-        #            await member.remove_roles(role_making(caller, payload.guild_id, payload.user_id, check, embed_id))
-        #            found = True
-        #        check = check + 1
-        ## Nathans testing server
-        #elif payload.guild_id == 793351956210384907 and payload.user_id != 802668851434487830:
-        #    check = 0
-        #    while check < len(global_emojis) and found == False:
-        #        if unicodedata.name(payload.emoji.name) == global_emojis[check]:
-        #            await member.remove_roles(role_making(caller, payload.guild_id, payload.user_id, check, embed_id))
-        #            found = True
-        #        check = check + 1
-        ## Prototype testing server
-        #elif payload.guild_id == 882687948842221598 and payload.user_id != 802668851434487830:
-        #    check = 0
-        #    while check < len(global_emojis) and found == False:
-        #        if unicodedata.name(payload.emoji.name) == global_emojis[check]:
-        #            await member.remove_roles(role_making(caller, payload.guild_id, payload.user_id, check, embed_id))
-        #            found = True
-        #        check = check + 1
-        ## Coffee's server
-        #elif payload.guild_id == 851112881385898015 and payload.user_id != 802668851434487830:
-        #    check = 0
-        #    while check < len(global_emojis) and found == False:
-        #        if unicodedata.name(payload.emoji.name) == global_emojis[check]:
-        #            await payload.member.remove_roles(role_making(caller, payload.guild_id, payload.user_id, check, embed_id))
-        #            found = True
-        #        check = check + 1
     else:
         pass
 
@@ -860,7 +759,6 @@ async def suspend(ctx, named, times, reason):
     else:
         await ctx.send("ERROR 100 User not found. Common reasons include: spelling, capitilization, numbers. Command aborted")
 
-# chan_name
 @client.command(pass_context=True)
 async def embeding(ctx, num_emojis):
     role_ids_list = [""] * 10
@@ -1076,32 +974,8 @@ async def Emancipate(ctx, multiple, amount):
         await msg1.delete()
 
 dat = {}
-# write all those roles to a json under the guilds id
-# write to json the guild id (check first if that guild id is already in the json)
-# check if there's values under that id and if not then make em if there is don't
 @client.command(pass_context=True)
 async def ping(ctx, *args):
     await ctx.send("pong")
-    dat[ctx.guild.id] = []
-    print(f'{type(dat[12])}')
-    check = 0
-    id = ctx.guild.roles
-    while check < len(ctx.guild.roles):
-        dat[ctx.guild.id].append({
-            f'guild_id_{check}': id[check].id})
-        check = check + 1
-
-    with open('guild_ids.txt', 'w') as file:
-        json.dump(dat, file)
-
-    #check = 0
-    #id = ctx.guild.roles
-    #while check < len(ctx.guild.roles):
-    #    await ctx.send(id[check].id)
-    #    check = check + 1
-
-    #for x in ctx.guild.roles:
-    #    await ctx.send(x)
-    #    await ctx.send(x.id)
 
 client.run('ODAyNjY4ODUxNDM0NDg3ODMw.YAylnw.6liyEc11GCMnCYFulkjsLRYACDc')
