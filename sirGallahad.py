@@ -572,11 +572,14 @@ async def on_message(message):
     await client.process_commands(message)
 
 data = {}
+embed_message_ids = {}
+embed_message_counter = 0
 global_message_id = [None] * 1000
 global_counter = 0
 file_name = ""
 global_emojis = ["WATERMELON", "BAGEL", "BACON", "PANCAKES", "FORTUNE COOKIE", "STEAMING BOWL", "SOFT ICE CREAM", "FRENCH FRIES", "SHORTCAKE"]
 reacts = ["\U0001F349", "\U0001F96F", "\U0001F953", "\U0001F95E", "\U0001F960", "\U0001F35C", "\U0001F366", "\U0001F35F", "\U0001F370"]
+dic = {}
 
 def algorithm(*arg):
     current_guild = client.get_guild(arg[0])
@@ -597,10 +600,11 @@ def role_making(*arg):
         role_ids = [""] * 10
         role_objects = [None] * 10
 
-        with open('data.txt', 'r') as file:
+
+        with open('roles_ids.txt', 'r') as file:
             info = json.load(file)
             check = 0
-            for stuff in data[arg[4]]:
+            for stuff in info[str(arg[4])]:
                 role_ids[check] = stuff[f'id_{check}']
                 check = check + 1
 
@@ -626,6 +630,12 @@ async def on_raw_reaction_add(payload):
     msg_id = False
     counter_id = 0
 
+    with open('roles_ids.txt', 'r') as file:
+        info = json.load(file)
+        for keys in info:
+            if payload.message_id == int(keys):
+                msg_id = True
+
     while global_message_id[counter_id] != None and msg_id != True:
         if payload.message_id == global_message_id[counter_id]:
             msg_id = True
@@ -641,7 +651,7 @@ async def on_raw_reaction_add(payload):
             check = 0
             while check < len(global_emojis) and found == False:
                 if unicodedata.name(payload.emoji.name) == global_emojis[check]:
-                    await payload.member.add_roles(role_making(caller, payload.guild_id, payload.user_id, check, embed_id))
+                    await payload.member.add_roles(role_making(caller, payload.guild_id, payload.user_id, check, embed_id, payload.message_id))
                     found = True
                 check = check + 1
     else:
@@ -660,6 +670,12 @@ async def on_raw_reaction_remove(payload):
     
     msg_id = False
     counter_id = 0
+
+    with open('roles_ids.txt', 'r') as file:
+        info = json.load(file)
+        for keys in info:
+            if payload.message_id == int(keys):
+                msg_id = True
 
     while global_message_id[counter_id] != None and msg_id != True:
         if payload.message_id == global_message_id[counter_id]:
@@ -764,6 +780,8 @@ async def embeding(ctx, num_emojis):
     role_ids_list = [""] * 10
     emoji_number = int(num_emojis)
     end_msg = ""
+    global data
+    global dic
 
     title1 = "Welcome to Sir Gallahad Embedded Messaging"
     desc = "This is a multi-step process to create an announcement where members of your server can assign their own roles through reacting to the message this process creates.\n\nTo start please enter the title you would like."
@@ -872,6 +890,8 @@ async def embeding(ctx, num_emojis):
 
     await msg2.delete()
 
+    ## Save each message ID, but wait I do already
+
     embed7=discord.Embed(title=title1,
                          description=description1,
                          color=0x109319)
@@ -903,24 +923,74 @@ async def embeding(ctx, num_emojis):
     number_of_ids = len(role_ids_list)
     check = 0
     data[fin.id] = []
+    # the reason these files aren't getting any bigger is cuz the check is always set back to zero
+    # so it's overwriting everything ##########################
+    # Read the file here first, put into list, append to list, dump tofile
+    #with open('roles_ids.txt', 'r+') as file:
+    #    # file_data = []
+    #    try:
+    #        datas = json.load(file)
+    #    except:
+    #        pass
+    #    #for line in open('roles_ids.txt', 'r+'):
+    #    #    file_data.append(json.load(line))
+    #    while check < number_of_ids:
+    #        # can't append new one doesn't exist
+    #        try:
+    #            data[fin.id].append({
+    #                f'id_{check}': role_ids_list[check]})
+    #        except:
+    #            data[fin.id] = []
+    #            data[fin.id].append({
+    #                f'id_{check}': role_ids_list[check]})
+    #        finally:
+    #            check = check + 1
+    #    json.dump(data, file)
     while check < number_of_ids:
-        data[fin.id].append({
-            f'id_{check}': role_ids_list[check]})
-        check = check + 1
+        try:
+            print("In the first try")
+            data[fin.id].append({
+                f'id_{check}': role_ids_list[check]})
+        except:
+            print("In the first exception")
+            data[fin.id] = []
+            data[fin.id].append({
+                f'id_{check}': role_ids_list[check]})
+        finally:
+            check = check + 1
+
+    print(f'Data just outside of the while loop before opening the file: {data}')
+
+    with open('roles_ids.txt', 'r') as file:
+        try:
+            ## Not appending to a specific id so I think it's creating a new thing
+            print("In the second try")
+            dic = json.load(file)
+            data.append(dic)
+            file.seek(0)
+            print(f'Here is the data in the second try: {data}')
+            print(f'Here is the dic in the second try: {dic}')
+        except:
+            print("In the second except")
+            #print(f'Here is the data in the second except: {data}')
+            # this creates a separate dict than above and causes an error
+            #json.dump(data, file)
+            pass
+
     with open('roles_ids.txt', 'w') as file:
         json.dump(data, file)
 
-    # instead of putting into global variable put it into a file with json
-    # But even if I do if the bot is still on the global variable should be storing this
+    #with open('roles_ids.txt', 'w') as file:
+    #    json.dump(data, file)
+
     global global_message_id
     global global_counter
+
     global_message_id[global_counter] = fin.id
     global_counter = global_counter + 1
 
     emoji_number = int(num_emojis)
 
-    #chan_name = discord.utils.get(ctx.guild.channels, name=chan_name)
-    #if fin.channel.id == chan_name.id:
     global reacts
     index = 0
     while emoji_number != 0:
@@ -977,5 +1047,14 @@ dat = {}
 @client.command(pass_context=True)
 async def ping(ctx, *args):
     await ctx.send("pong")
+    with open('roles_ids.txt', 'r') as file:
+        data = json.load(file)
+        #for key in data:
+        #    print(key, '->', data[key])
+        print(data)
+        data['hello'] = []
+        data['hello'].append({
+            'check': 'checking12'})
+        print(data)
 
 client.run('ODAyNjY4ODUxNDM0NDg3ODMw.YAylnw.6liyEc11GCMnCYFulkjsLRYACDc')
