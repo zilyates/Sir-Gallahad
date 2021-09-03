@@ -600,7 +600,6 @@ def role_making(*arg):
         role_ids = [""] * 10
         role_objects = [None] * 10
 
-
         with open('roles_ids.txt', 'r') as file:
             info = json.load(file)
             check = 0
@@ -890,8 +889,6 @@ async def embeding(ctx, num_emojis):
 
     await msg2.delete()
 
-    ## Save each message ID, but wait I do already
-
     embed7=discord.Embed(title=title1,
                          description=description1,
                          color=0x109319)
@@ -923,65 +920,27 @@ async def embeding(ctx, num_emojis):
     number_of_ids = len(role_ids_list)
     check = 0
     data[fin.id] = []
-    # the reason these files aren't getting any bigger is cuz the check is always set back to zero
-    # so it's overwriting everything ##########################
-    # Read the file here first, put into list, append to list, dump tofile
-    #with open('roles_ids.txt', 'r+') as file:
-    #    # file_data = []
-    #    try:
-    #        datas = json.load(file)
-    #    except:
-    #        pass
-    #    #for line in open('roles_ids.txt', 'r+'):
-    #    #    file_data.append(json.load(line))
-    #    while check < number_of_ids:
-    #        # can't append new one doesn't exist
-    #        try:
-    #            data[fin.id].append({
-    #                f'id_{check}': role_ids_list[check]})
-    #        except:
-    #            data[fin.id] = []
-    #            data[fin.id].append({
-    #                f'id_{check}': role_ids_list[check]})
-    #        finally:
-    #            check = check + 1
-    #    json.dump(data, file)
     while check < number_of_ids:
         try:
-            print("In the first try")
             data[fin.id].append({
                 f'id_{check}': role_ids_list[check]})
         except:
-            print("In the first exception")
             data[fin.id] = []
             data[fin.id].append({
                 f'id_{check}': role_ids_list[check]})
         finally:
             check = check + 1
 
-    print(f'Data just outside of the while loop before opening the file: {data}')
-
     with open('roles_ids.txt', 'r') as file:
         try:
-            ## Not appending to a specific id so I think it's creating a new thing
-            print("In the second try")
             dic = json.load(file)
             data.append(dic)
             file.seek(0)
-            print(f'Here is the data in the second try: {data}')
-            print(f'Here is the dic in the second try: {dic}')
         except:
-            print("In the second except")
-            #print(f'Here is the data in the second except: {data}')
-            # this creates a separate dict than above and causes an error
-            #json.dump(data, file)
             pass
 
     with open('roles_ids.txt', 'w') as file:
         json.dump(data, file)
-
-    #with open('roles_ids.txt', 'w') as file:
-    #    json.dump(data, file)
 
     global global_message_id
     global global_counter
@@ -1047,14 +1006,5 @@ dat = {}
 @client.command(pass_context=True)
 async def ping(ctx, *args):
     await ctx.send("pong")
-    with open('roles_ids.txt', 'r') as file:
-        data = json.load(file)
-        #for key in data:
-        #    print(key, '->', data[key])
-        print(data)
-        data['hello'] = []
-        data['hello'].append({
-            'check': 'checking12'})
-        print(data)
 
 client.run('ODAyNjY4ODUxNDM0NDg3ODMw.YAylnw.6liyEc11GCMnCYFulkjsLRYACDc')
