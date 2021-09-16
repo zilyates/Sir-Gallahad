@@ -4,6 +4,8 @@ from datetime import datetime
 from discord.ext import commands
 import unicodedata
 import json
+import time
+from collections import deque
 
 intents = discord.Intents.default()
 intents.members = True
@@ -25,7 +27,7 @@ knightServerRolesID = [
     798775020364103710, # head coach 7
     798775235289284628, # assistant coach 8
     798775467863703592, # analyst 9
-    794996146178097162, # assistant manager 0
+    798773954135326730, # assistant manager 0
     799028318954848286, # lobby manager 1
     798774735273459762, # vod recorder 2
     798776537389596672, # legal assistant 3
@@ -211,6 +213,8 @@ merlinContentCreators = [
 @client.event
 async def on_ready():
     print("I'm ready")
+    #asyncio.run(main())
+    #await main()
 
 welcomeMessage = [":fire: Welcome to the Excalibur Knights server! :fire: \nHere's the steps you need to know in order to set yourself up to tryout for the team\n",
                   "(If you're a ringer the following does not partain to you, thank you for taking the time to ring for us we appreciate it)\n\n",
@@ -224,36 +228,190 @@ warning = "You have 45 min to submit the appropriate form before you are kicked 
 
 guilder = client.get_guild(695831785900081212)
 
+start_log = time.time()
+joined_time = {}
+
+#async def kick_time_keeping(event, user_ids, knights_guild):
+#    timers = 0
+#    global warning
+#    time_entered = False
+#    current_persons_time = event.popleft()
+#    current_time = time.time()
+
+#    while event:
+#        send = int(current_persons_time)
+
+#        if current_time >= send:
+#            id = user_ids.popleft()
+#            print(f'Knights_guild: {type(knights_guild)}')
+#            newComer = knights_guild.get_role(801188644932288553)
+#            member_renewed = knights_guild.get_member(int(id))
+
+#            if newComer in member_renewed.roles:
+#                await member_renewed.kick()
+#            else:
+#                print("The member did not still have the newcomers role")
+
+#            current_persons_time = event.popleft()
+#        else:
+#            time_till = send - current_time
+#            await asyncio.sleep(time_till)
+
+#async def warn_time_keeping(event, user_ids, knights_guild):
+#    timers = 0
+#    global warning
+#    time_entered = False
+#    current_persons_time = event.popleft()
+#    current_time = time.time()
+
+#    while event: 
+#        send = int(current_persons_time)
+
+#        if current_time <= send:
+#            id = user_ids.popleft()
+#            member = knights_guild.get_member(int(id))
+#            channel = await member.create_dm()
+#            await channel.send(warning)
+
+#            current_persons_time = event.popleft()
+
+#            time_till = send - current_time
+#            await asyncio.sleep(time_till)
+#        else:
+#            #time_till = send - current_time
+#            #await asyncio.sleep(time_till)
+#            pass
+
+#        timers = timers + 1
+#    print("Finished the function")
+
+#async def main():
+#    check = 0
+#    data = [None] * 50
+#    none = False
+#    warn = [None] * 50
+#    kick = [None] * 50
+#    warn_user_ids = [None] * 50
+#    kick_user_ids = [None] * 50
+#    global warning
+#    with open('joined_times.txt', 'r') as file:
+#        info = json.load(file)
+
+#        for x in info:
+#            data[check] = x
+#            check = check + 1
+#            print(f'In for loop for info: {x}')
+        
+#        count = 0
+#        while count < len(data) and none != True:
+#            if data[count] != None:
+#                jsonData = info[data[count]]
+
+#                for sub in jsonData:
+#                    for key in sub:
+#                        warn[count] = int(sub[key]) + 10
+#                        print(f'Should be the value in under the user id: {warn[count]}')
+#                        kick[count] = int(sub[key]) + 10
+
+#                count = count + 1
+#            else:
+#                break
+
+#        warnings = deque()
+#        kickings = deque()
+#        warn_ids = deque()
+#        kick_ids = deque()
+
+#        for w in warn:
+#            warnings.append(w)
+#            print(f'Appending {w} to the warnings queue')
+#            if w == None:
+#                break
+#        for z in kick:
+#            kickings.append(z)
+#            print(f'Appending {z} to the kickings queue')
+#            if z == None:
+#                break
+#        for p in data:
+#            warn_ids.append(p)
+#            print(f'Appending {p} to the warn_ids queue')
+#            if p == None:
+#                break
+#        for q in data:
+#            kick_ids.append(q)
+#            print(f'Appending {q} to the kick_ids queue')
+#            if q == None:
+#                break
+
+#        knights = client.get_guild(695831785900081212)
+#        print(f'{type(knights)}')
+
+#        # If time has passed by 2 min or more don't warn
+#        print('In warnings function')
+#        await warn_time_keeping(warnings, warn_ids, knights)
+#        print('In kick function')
+#        await kick_time_keeping(kickings, kick_ids, knights)
+
+#        # Empty the json file
+#        print('Emptying file')
+#        with open('joined_times.txt', 'r+') as y:
+#            y.truncate(0)
+
+#asyncio.run(main())
+
 @client.event
 async def on_member_join(member):
+    global start_log
+    global warning
     if member.guild.id == 695831785900081212:
         joiner = await member.create_dm()
         await joiner.send(welcomeMessageFinal)
 
-        now = datetime.now()
-        dt_string = now.strftime("%d/%m/%Y %H:%M:%S")
-        print(f'{dt_string}')
-        print(f'{member} joined the server')
+        # Here keep the sleeps and stuff so that everythings done the same way just added function when the program reboots
 
-        ## This works for excalibur knights specifically cuz the other server has another bot giving newcomers role
-        guild = client.get_guild(695831785900081212)
+        time_joined = int(time.time())
+
+        guild = client.get_guild(member.guild.id)
         newComer = member.guild.get_role(801188644932288553)
         await member.add_roles(newComer)
+        
+        # When making the json maybe put if they've been warned already
+
+        # Append times when the user joins to the server
+        #joined_time[member.id] = []
+        #joined_time[member.id].append({
+        #    'Time Joined': time_joined})
+
+        #with open('joined_times.txt', 'r') as file:
+        #    try:
+        #        info = json.load(file)
+        #        joined_time.append(info)
+        #        file.seek(0)
+        #    except:
+        #        pass
+
+        #with open('joined_times.txt', 'w') as file:
+        #    json.dump(joined_time, file)
 
         await asyncio.sleep(10800)
     
         channel = await member.create_dm()
         if newComer in member.roles:
-            await channel.send(warning)
+            await channel.send(warning) 
 
         await asyncio.sleep(2700)
 
         member_renewed = guild.get_member(member.id)
         if newComer in member_renewed.roles:
-            now = datetime.now()
-            dt_string = now.strftime("%d/%m/%Y %H:%M:%S")
-            print(f'{dt_string}')
-            print(f'{member} did not submit the form and was kicked')
+            # Remove from json the person that was kicked
+            #with open('joined_times.txt', 'w') as w:
+            #    with open('joined_times.txt', 'r') as x:
+            #        for line in x:
+            #            element = json.loads(line.strip())
+            #            if f'{member.id}' in element:
+            #                del element[f'{member.id}']
+            #            w.write(json.dumps(element))
+
             await member.kick()
     else:
         pass
@@ -426,6 +584,10 @@ async def on_message(message):
                         elif regionApp == "EU":
                             await user.add_roles(knightServerRolesObj[25])
                             EU = True
+                    elif field.name == "NA Player Application":
+                        await user.add_roles(knightServerRolesObj[24])
+                    elif field.name == "EU Player Application":
+                        await user.add_roles(knightServerRolesObj[25])
                     elif field.name == "Which role?" or field.name == "Which role are you applying for?" or field.name == "Which role are you applying for? (cont.)":
                         if field.value:
                             index = 1
@@ -1006,5 +1168,25 @@ dat = {}
 @client.command(pass_context=True)
 async def ping(ctx, *args):
     await ctx.send("pong")
+    with open('roles_ids.txt', 'r') as file:
+        info = json.load(file)
+        data = [None] * 10
+        # this gives only the keys
+        #for x in info:
+        #    print(x)
+
+        # The following code reads the value under the key
+        check = 0
+        for x in info:
+            data[check] = x
+            check = check + 1
+        
+        jsonData = info[data[0]]
+
+        for y in jsonData:
+            if y != None:
+                print(f'{y.values()}')
+            else:
+                break
 
 client.run('ODAyNjY4ODUxNDM0NDg3ODMw.YAylnw.6liyEc11GCMnCYFulkjsLRYACDc')
