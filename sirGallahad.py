@@ -584,6 +584,7 @@ async def on_message(message):
                         elif regionApp == "EU":
                             await user.add_roles(knightServerRolesObj[25])
                             EU = True
+                    # Not giving region roles for player application
                     elif field.name == "NA Player Application":
                         await user.add_roles(knightServerRolesObj[24])
                     elif field.name == "EU Player Application":
